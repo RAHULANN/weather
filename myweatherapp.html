@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #contaner{
+            display: flex;
+            width: 100%;
+            height: 400px;
+            font-family: 'Times New Roman', Times, serif;
+            background-image: 
+            url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRr_GFmTm6jEaseDMDx4-L8bNE_4GKcxVdU1g&usqp=CAU");
+            background-repeat: no-repeat;
+            height: 430px;
+            width: 100%;
+            background-size: cover;
+
+        }
+#right{
+    margin-left: 20%;
+    width: 40%;
+}
+#left{
+    width: 40%;
+}
+        .mapouter {
+            position: relative;
+            text-align: right;
+            height: 400px;
+            width: 400px;
+        }
+        .gmap_canvas {
+            overflow: hidden;
+            background: none !important;
+            height: 400px;
+            width: 400px;
+        }
+        #city{
+            margin: 10px;
+        }
+        img{
+            height: 60px;
+            width: 100px;
+        }
+        #div1{
+            display: flex;
+        }
+        #div2{
+            display: flex;
+        }
+        #forcast{
+            display: flex;
+            margin-top: 30px;
+         
+              background-color: #917c7c;
+               background-image: radial-gradient(red, yellow);
+        }
+        #data{
+            width: 400px;
+           
+            height: 400px;
+           
+        }
+        #daydiv{
+            margin: 5px;
+        }
+      input{
+          width: 55%;
+          height: 40px;
+          border-radius: 25px;
+      }
+      button{
+        width: 35%;
+          height: 50px;
+          border-radius: 25px;
+          font-size: 25px;
+          text-align: center;
+      }
+      #dddd{
+          height: 300px;
+          margin-top: 0px;
+          width: 100%;
+        
+      }
+    </style>
+   
+</head>
+<body>
+
+<div id="contaner">
+    <div id="left">
+     <input type="text" id="city" placeholder="CITY NAME" />
+    <button onclick="getweather()">search</button>
+   
+    <div id="data">  </div>
+  
+
+</div>
+
+<div id="right">
+    <div class="mapouter">
+        <div class="gmap_canvas">
+        </div>
+    </div>
+</div>
+</div>
+<div id="forcast"></div>
+</body>
+</html>
+<script >
+
+
+var dekho=document.querySelector("body");
+
+  var forcast=document.getElementById("forcast");
+    var l=document.getElementById("data");
+   
+   var cont=document.getElementById("contaner")
+   
+  async  function getweather(){
+   
+      try{
+        var p=document.getElementById("city").value;
+    let responce= await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${p}&units=metric&appid=4c1541912ac59a4d2c04176bdee3e042`)
+   
+    let data= await responce.json()
+    var lat=data.coord.lat;
+var lon=data.coord.lon;
+
+    let respon =await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=metric&exclude=hourly,minutely,current,alerts&appid=4c1541912ac59a4d2c04176bdee3e042`)
+
+    let data1= await respon.json()
+    console.log("respon:",data)
+
+    showdata(data)
+    showdatadiv(data1)
+
+    var d=document.querySelector(".gmap_canvas");
+    d.innerHTML=`<iframe width="400" height="400" id="gmap_canvas"
+                src="https://maps.google.com/maps?q=${p}&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0"
+                scrolling="no" marginheight="0" marginwidth="0"></iframe><a href="https://123movies-to.org">123
+                movies</a><br>
+           <a href="https://www.embedgooglemap.net">embed responsive google map</a>
+           `;
+
+      }
+      catch(err){
+          alert("sorry this place not found")
+          let dddd=document.createElement("img")
+          dddd.id="dddd"
+          dddd.src="https://image.freepik.com/free-vector/404-error-page-black-bear-umbrella-rain_8582-1.jpg"
+          l.append(dddd)
+      }
+  
+                }
+
+
+        function showdata(data){
+            
+            let cityname=document.createElement("h1")
+            cityname.textContent=data.name;
+            let j=document.createElement("h2");
+            j.textContent=`MIN TEMP: ${data.main.temp_min}°C`;
+
+            let k=document.createElement("h2");
+            k.textContent=`MAX TEMP : ${data.main.temp_max}°C`;
+
+            let lo=document.createElement("h2");
+            lo.textContent= ` WIND SPEED :${data.wind.speed}`;
+
+            let m=document.createElement("h2");
+            m.textContent=`CLOUDS : ${data.clouds.all}`;
+
+          let n=document.createElement("h2");
+           var dd=data.sys.sunrise;
+
+       
+      
+           let div2=document.createElement("div")
+   div2.id="div2";
+   let img1=document.createElement("img")
+   img1.src="https://icon-library.com/images/sunrise-icon-png/sunrise-icon-png-11.jpg"
+   
+       
+
+
+        let unix_timestamp = dd;
+// Create a new JavaScript Date object based on the timestamp
+// multiplied by 1000 so that the argument is in milliseconds, not seconds.
+var date = new Date(unix_timestamp * 1000);
+// Hours part from the timestamp
+var hours = date.getHours();
+// Minutes part from the timestamp
+var minutes = "0" + date.getMinutes();
+// Seconds part from the timestamp
+var seconds = "0" + date.getSeconds();
+
+// Will display time in 10:30:23 format
+var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+
+        n.innerHTML=`SUNRISE  :${formattedTime}`;
+  
+div2.append(img1,n)
+
+
+
+            let o=document.createElement("h2");
+        
+   let div1=document.createElement("div")
+   div1.id="div1";
+   let img=document.createElement("img")
+   img.src="https://thumbs.dreamstime.com/z/sunset-icon-vector-sign-symbol-isolated-white-background-logo-concept-your-web-mobile-app-design-134154820.jpg"
+   
+            
+        let unix_timestamp1 = data.sys.sunset;
+// Create a new JavaScript Date object based on the timestamp
+// multiplied by 1000 so that the argument is in milliseconds, not seconds.
+var date = new Date(unix_timestamp1 * 1000);
+// Hours part from the timestamp
+var hours = date.getHours();
+// Minutes part from the timestamp
+var minutes = "0" + date.getMinutes();
+// Seconds part from the timestamp
+var seconds = "0" + date.getSeconds();
+
+// Will display time in 10:30:23 format
+var formattedTime1 = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+
+o.textContent=`SUN SET: ${formattedTime1}`;
+div1.append(img,o)
+
+l.textContent=null;
+       l.append(cityname,j,k,lo,m,div2,div1);
+        }  
+        
+        
+   function showdatadiv(data1){
+    forcast.textContent="";
+    var N=data1.daily.length;
+   
+    for(var y=0;y<N;y++){
+        let daydiv=document.createElement("div")
+
+        daydiv.id="daydiv"
+        let dayname=document.createElement("h2")
+
+        let dayteammax=document.createElement("h2");
+
+        dayteammax.textContent=`max :${data1.daily[y].temp.max}°C`;
+        let dayteammin=document.createElement("h2");
+        dayteammin.textContent=`min:${data1.daily[y].temp.min}°C`;
+        let dayimg= document.createElement("img");
+ 
+        dayimg.id="dayimg"
+        const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+  let dday = new Date();
+  let day = dday.getDay();
+
+  let final =(day+y)%7
+  
+  dayname.textContent=weekday[final];
+ // console.log('weekday:', weekday[final])
+
+     if(data1.daily[y].weather[0].main==="Clear"){
+         dayimg.src="https://w7.pngwing.com/pngs/480/79/png-transparent-sky-cloud-icon-cloudy-weather-icon-material-text-camera-icon-logo.png"
+         console.log("clear")
+     }
+     else if(data1.daily[y].weather[0].main==="Clouds"){
+         dayimg.src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYQEeWr6DBFGOeTvPVaKeqncvpLaiOUSToFA&usqp=CAU"
+     }
+     else{
+         dayimg.src="https://iconape.com/wp-content/files/jc/338838/png/338838.png"
+     }
+
+    
+     daydiv.append(dayname,dayimg,dayteammax,dayteammin);
+    forcast.append(daydiv);
+
+    }
+   
+
+   }
+
+
+</script>
+
